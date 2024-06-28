@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:primeiro_app_com_ia/pdfviewscreen.dart';
+import 'package:primeiro_app_com_ia/relatorio.dart';
 
 import 'coletas_de_dados.dart';
 import 'display_dados.dart';
@@ -94,7 +96,7 @@ class _MyHomePageState extends State<MyHomePage> {
             children: <Widget>[
               const SizedBox(height: 20),
               const Text(
-                'CALCULADOR DE MÉDIA',
+                'CALCULATOR DE MÉDIA',
                 style: TextStyle(
                   fontSize: 24,
                   fontWeight: FontWeight.bold,
@@ -111,26 +113,28 @@ class _MyHomePageState extends State<MyHomePage> {
               ),
               const SizedBox(height: 20),
               ElevatedButton(
-                onPressed: (){_calcularMedia(
-                  _nomeController.text,
-                  _emailController.text,
-                  double.tryParse(_nota1Controller.text) ?? 0.0,
-                  double.tryParse(_nota2Controller.text) ?? 0.0,
-                  double.tryParse(_nota3Controller.text) ?? 0.0,
-                  _media,
-                );},
+                onPressed: () {
+                  _calcularMedia(
+                    _nomeController.text,
+                    _emailController.text,
+                    double.tryParse(_nota1Controller.text) ?? 0.0,
+                    double.tryParse(_nota2Controller.text) ?? 0.0,
+                    double.tryParse(_nota3Controller.text) ?? 0.0,
+                    _media,
+                  );
+                },
                 style: ElevatedButton.styleFrom(
                   foregroundColor: Colors.white,
                   backgroundColor: Colors.blue,
-                  minimumSize: Size.fromHeight(40),
-                  padding: EdgeInsets.symmetric(horizontal: 20),
+                  minimumSize: const Size.fromHeight(40),
+                  padding: const EdgeInsets.symmetric(horizontal: 20),
                   textStyle: const TextStyle(fontSize: 16),
                   // Set button color
                   shape: const RoundedRectangleBorder(
                     borderRadius: BorderRadius.zero,
                   ), // Set rounded corners
                 ),
-                child: Text('CALCULAR MÉDIA'),
+                child: const Text('CALCULAR MÉDIA'),
               ),
               const SizedBox(height: 20),
               DisplayDados(
@@ -139,7 +143,7 @@ class _MyHomePageState extends State<MyHomePage> {
                 nota1: _nota1,
                 nota2: _nota2,
                 nota3: _nota3,
-                media: (_nota1 + _nota2 + _nota3) / 3,
+                media: CaldulaMedia(),
               ),
               const SizedBox(height: 20),
               ElevatedButton(
@@ -147,15 +151,42 @@ class _MyHomePageState extends State<MyHomePage> {
                 style: ElevatedButton.styleFrom(
                   foregroundColor: Colors.white,
                   backgroundColor: Colors.blue,
-                  minimumSize: Size.fromHeight(40),
-                  padding: EdgeInsets.symmetric(horizontal: 20),
+                  minimumSize: const Size.fromHeight(40),
+                  padding: const EdgeInsets.symmetric(horizontal: 20),
                   textStyle: const TextStyle(fontSize: 16),
                   // Set button color
                   shape: const RoundedRectangleBorder(
                     borderRadius: BorderRadius.zero,
                   ), // Set rounded corners
                 ),
-                child: const Text('APAGA OS CAMPOS'),
+                child: const Text('APAGAR OS CAMPOS'),
+              ),
+              const SizedBox(height: 20),
+              ElevatedButton(
+                onPressed: () async {
+                  // Create a Student object with your desired data
+                  final student = Student(
+                    _nome,
+                    _email,
+                    _nota1,
+                     _nota2,
+                    _nota3,
+                    CaldulaMedia(), // Replace with your logic
+                  );
+                  await createAndShowPdf(student, context);
+                },
+                style: ElevatedButton.styleFrom(
+                  foregroundColor: Colors.white,
+                  backgroundColor: Colors.blue,
+                  minimumSize: const Size.fromHeight(40),
+                  padding: const EdgeInsets.symmetric(horizontal: 20),
+                  textStyle: const TextStyle(fontSize: 16),
+                  // Set button color
+                  shape: const RoundedRectangleBorder(
+                    borderRadius: BorderRadius.zero,
+                  ), // Set rounded corners
+                ),
+                child: const Text('GERAR PDF'),
               ),
             ],
           ),
@@ -163,4 +194,6 @@ class _MyHomePageState extends State<MyHomePage> {
       ),
     );
   }
+
+  double CaldulaMedia() => (_nota1 + _nota2 + _nota3) / 3;
 }

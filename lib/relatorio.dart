@@ -1,25 +1,66 @@
-import 'dart:ui';
+import 'dart:io';
 
-import 'package:flutter/cupertino.dart';
-import 'package:pdf/pdf.dart';
-import 'package:pdf/io.dart';
+import 'package:path_provider/path_provider.dart';
+import 'package:pdf/widgets.dart';
+import 'package:pdfx/pdfx.dart';
 
-Future<void> generatePDF(String name, String email, double nota1, double nota2, double nota3, double media) async {
-  // Create a PDF document
-  final pdf = Document();
+class Student {
+  final String name;
+  final String email;
+  final double nota1;
+  final double nota2;
+  final double nota3;
+  final double media;
 
-  // Add a page to the document
-  final page = Page(pdf);
-
-  // Add text elements for each data field
-  page.addText('Nome: $name', style: TextStyle(fontSize: 16));
-  page.addText('Email: $email', style: TextStyle(fontSize: 16));
-  page.addText('Nota 1: $nota1', style: TextStyle(fontSize: 16));
-  page.addText('Nota 2: $nota2', style: TextStyle(fontSize: 16));
-  page.addText('Nota 3: $nota3', style: TextStyle(fontSize: 16));
-  page.addText('Média: $media', style: TextStyle(fontSize: 16));
-
-  // Save the PDF document
-  final file = File('result.pdf');
-  await file.writeAsBytes(await pdf.outputBytes());
+  Student(this.name, this.email, this.nota1, this.nota2, this.nota3, this.media);
 }
+
+Future<PdfController> generatePDF(Student student) async {
+  final pdf = Document();
+  pdf.addPage(
+    Page(
+      build: (context) => Center(
+        child: Column(
+          children: [
+            Text(
+              'Nome: ${student.name}',
+                style: const TextStyle(fontSize: 16.0),
+            ),
+            Text(
+              'Email: ${student.email}',
+              style: const TextStyle(fontSize: 16.0),
+            ),
+            Text(
+              'Nota 1: ${student.nota1.toStringAsFixed(2)}',
+              style: const TextStyle(fontSize: 16.0),
+            ),
+            Text(
+              'Nota 2: ${student.nota2.toStringAsFixed(2)}',
+              style: const TextStyle(fontSize: 16.0),
+            ),
+            Text(
+              'Nota 3: ${student.nota3.toStringAsFixed(2)}',
+              style: const TextStyle(fontSize: 16.0),
+            ),
+            Text(
+              'Média: ${student.media.toStringAsFixed(2)}',
+              style: const TextStyle(fontSize: 16.0),
+            ),
+          ],
+        ),
+      ),
+    ),
+  );
+
+  String directory = (await getApplicationDocumentsDirectory()).path;
+  final pdfName = "$directory/resultado_${student.name.replaceAll(' ', '_')}.pdf";
+  final File file = File(pdfName);
+  await file.writeAsBytes(await pdf.save());
+  return PdfController(
+    document: PdfDocument.openFile(file.path),
+  );
+}
+
+
+
+
